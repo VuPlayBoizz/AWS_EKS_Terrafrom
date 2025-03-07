@@ -1,0 +1,9 @@
+# Ignore Terraform cache và thư mục làm việc
+Environments/*/.terraform/
+
+# Ignore Terraform state files
+Environments/*/terraform.tfstate
+Environments/*/terraform.tfstate.backup
+Environments/*/*.tfstate
+Environments/*/*.tfstate.backup
+Environments/*/terraform.tfvars
