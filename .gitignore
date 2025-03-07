@@ -7,3 +7,4 @@ Environments/*/terraform.tfstate.backup
 Environments/*/*.tfstate
 Environments/*/*.tfstate.backup
 Environments/*/terraform.tfvars
+Environments/*/.terraform.*
