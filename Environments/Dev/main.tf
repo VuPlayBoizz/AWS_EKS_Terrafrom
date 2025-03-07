@@ -101,43 +101,43 @@ module "jump-server" {
   tags                        = var.tags
 }
 
-# module "eks-cluster" {
-#   source               = "../../Modules/aws_eks/01_eks_cluster"
-#   cluster_name         = var.cluster_name
-#   kubernetes_version   = var.kubernetes_version
-#   eks_cluster_role_arn = module.iam-roles.eks_cluster_role_arn
-#   private_subnet_ids   = [module.aws-subnet-1a.private_subnet_id, module.aws-subnet-1b.private_subnet_id]
-#   control_plane_sg_id  = module.aws-security-group.control_plane_sg_id
-#   tags                 = var.tags
-# }
+module "eks-cluster" {
+  source               = "../../Modules/aws_eks/01_eks_cluster"
+  cluster_name         = var.cluster_name
+  kubernetes_version   = var.kubernetes_version
+  eks_cluster_role_arn = module.iam-roles.eks_cluster_role_arn
+  private_subnet_ids   = [module.aws-subnet-1a.private_subnet_id, module.aws-subnet-1b.private_subnet_id]
+  control_plane_sg_id  = module.aws-security-group.control_plane_sg_id
+  tags                 = var.tags
+}
 
-# module "eks-worker-node" {
-#   source                   = "../../Modules/aws_eks/02_eks_worker_node"
-#   cluster_name             = var.cluster_name
-#   node_group_name          = var.node_group_name
-#   eks_worker_node_role_arn = module.iam-roles.eks_worker_node_role_arn
-#   private_subnet_ids       = [module.aws-subnet-1a.private_subnet_id, module.aws-subnet-1b.private_subnet_id]
-#   instance_types           = var.instance_types[1]
-#   ami_type                 = var.ami_type
-#   disk_size                = var.disk_size
-#   desired_size             = var.desired_size
-#   min_size                 = var.min_size
-#   max_size                 = var.max_size
-#   max_unavailable          = var.max_unavailable
-#   ec2_ssh_key              = module.key-pair.key_name
-#   worker_node_sg_id        = module.aws-security-group.worker_node_sg_id
-#   depends_on               = [module.eks-cluster]
-# }
+module "eks-worker-node" {
+  source                   = "../../Modules/aws_eks/02_eks_worker_node"
+  cluster_name             = var.cluster_name
+  node_group_name          = var.node_group_name
+  eks_worker_node_role_arn = module.iam-roles.eks_worker_node_role_arn
+  private_subnet_ids       = [module.aws-subnet-1a.private_subnet_id, module.aws-subnet-1b.private_subnet_id]
+  instance_types           = var.instance_types[1]
+  ami_type                 = var.ami_type
+  disk_size                = var.disk_size
+  desired_size             = var.desired_size
+  min_size                 = var.min_size
+  max_size                 = var.max_size
+  max_unavailable          = var.max_unavailable
+  ec2_ssh_key              = module.key-pair.key_name
+  worker_node_sg_id        = module.aws-security-group.worker_node_sg_id
+  depends_on               = [module.eks-cluster]
+}
 
-# module "ebs-csi-driver" {
-#   source       = "../../Modules/aws_eks/03_eks_addons"
-#   cluster_name = var.cluster_name
-#   depends_on = [module.eks-cluster,
-#   module.eks-worker-node]
-# }
+module "ebs-csi-driver" {
+  source       = "../../Modules/aws_eks/03_eks_addons"
+  cluster_name = var.cluster_name
+  depends_on = [module.eks-cluster,
+  module.eks-worker-node]
+}
 
-# module "aws_ecr" {
-#   source          = "../../Modules/aws_ecr"
-#   repository_name = "nguyenbavu"
-#   tags            = var.tags
-# }
+module "aws_ecr" {
+  source          = "../../Modules/aws_ecr"
+  repository_name = "nguyenbavu"
+  tags            = var.tags
+}
