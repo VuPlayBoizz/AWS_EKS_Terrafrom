@@ -136,3 +136,9 @@ module "ebs-csi-driver" {
     depends_on = [module.eks-cluster,
                   module.eks-worker-node]
 }
+
+module "aws_ecr" {
+    source = "../../Modules/aws_ecr"
+    repository_name = "nguyenbavu"
+    tags = var.tags
+}
