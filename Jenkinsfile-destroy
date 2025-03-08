@@ -1,0 +1,49 @@
+pipeline {
+    agent {
+        label 'devops2402'
+    }
+
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'master', description: '')
+        string(name: 'REGION', defaultValue: 'ap-southeast-1', description: '')
+        string(name: 'WORKING_DIRECTORY', defaultValue: '/home/ubuntu/jenkins_agent/workspace/Terraform-plan/Environments/Dev', description: '')        
+    }
+
+    stages {
+        stage("Git Checkout Repository") {
+            steps { 
+                script {
+                    git branch: "${params.BRANCH_NAME}",
+                        credentialsId: 'git-credentials',
+                        url: 'https://github.com/VuPlayBoizz/AWS_EKS_Terrafrom.git'                
+                }
+            }
+        }
+
+        stage("Setup AWS Credentials") {
+            steps {
+                withCredentials([aws(credentialsId: 'aws-credentials', region: "${params.REGION}")]) {  
+                    script {
+                        env.AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID
+                        env.AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY
+                    }
+                    sh "aws sts get-caller-identity" 
+                }
+            }
+        }
+
+        stage("Terraform destroy") {
+            steps {
+                dir("${params.WORKING_DIRECTORY}") {  
+                    script {
+                        sh '''
+                            pwd
+                            ls -la
+                            terraform destroy --auto-approve
+                        '''
+                    }
+                }                 
+            }
+        }
+    }
+}
