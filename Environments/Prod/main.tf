@@ -1,6 +1,9 @@
+provider "aws" {
+  region = var.aws_region
+}
+
 module "provider" {
-    source = "../../Global"
-    region = var.region
+  source = "../../Global"
 }
 
 module "aws_vpc" {   

@@ -8,3 +8,6 @@ Environments/*/*.tfstate
 Environments/*/*.tfstate.backup
 Environments/*/terraform.tfvars
 Environments/*/.terraform.*
+
+Taskfile.yaml
+Environments/*/eks-key-pair.*
