@@ -1,0 +1,91 @@
+pipeline {
+    agent {
+        label 'devops2402'
+    }
+
+    parameters {
+        string(name: 'BRANCH_NAME', defaultValue: 'master', description: '')
+        string(name: 'REGION', defaultValue: 'ap-southeast-1', description: '')
+        string(name: 'WORKING_DIRECTORY', defaultValue: 'Environments/Dev', description: '')        
+    }
+
+    stages {
+        stage("Git Checkout Repository") {
+            steps { 
+                script {
+                    git branch: "${params.BRANCH_NAME}",
+                        credentialsId: 'git-credentials',
+                        url: 'https://github.com/VuPlayBoizz/AWS_EKS_Terrafrom.git'                
+                }
+            }
+        }
+
+        stage("Setup AWS Credentials") {
+            steps {
+                withCredentials([aws(credentialsId: 'aws-credentials', region: "${params.REGION}")]) {  
+                    script {
+                        env.AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID
+                        env.AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY
+                    }
+                    sh "aws sts get-caller-identity" 
+                }
+            }
+        }
+
+        stage("Terraform Init") {
+            steps {
+                dir("${params.WORKING_DIRECTORY}") {  
+                    script {
+                        sh 'terraform fmt'
+                        sh 'terraform init'      
+                    }
+                }
+            }
+        }
+
+        stage("Terraform Validate") {
+            steps {
+                dir("${params.WORKING_DIRECTORY}") {  
+                    script {
+                        sh 'terraform fmt -check'
+                        sh 'terraform validate'     
+                    }
+                }
+            }            
+        }
+        stage("Load Terraform Variables") {
+            steps {
+                withCredentials([file(credentialsId: 'terraform-tfvars', variable: 'TFVARS_FILE')]) {
+                    script {
+                        sh "cp -f ${TFVARS_FILE} ${params.WORKING_DIRECTORY}/terraform.tfvars"
+                    }
+                }
+            }
+        }
+
+        stage("Terraform plan") {
+            when {
+                branch "master"
+            }
+            steps {
+                dir("${params.WORKING_DIRECTORY}") {  
+                    script {
+                        sh 'terraform plan -var-file="terraform.tfvars"'
+                    }
+                }                
+            }
+        }
+        stage("Terraform apply") {
+            when {
+                branch "master"
+            }
+            steps {
+                dir("${params.WORKING_DIRECTORY}") {  
+                    script {
+                        sh 'terraform apply -auto-approve -var-file="terraform.tfvars"'
+                    }
+                }                 
+            }
+        }
+    }
+}
