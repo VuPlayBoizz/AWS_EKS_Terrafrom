@@ -2,6 +2,10 @@ provider "aws" {
   region = var.aws_region
 }
 
+module "provider" {
+  source = "../../Global"
+}
+
 module "aws_vpc" {   
     source                  = "../../Modules/aws_networking/01_aws_vpc"
     cidr_block              = var.cidr_block
