@@ -28,6 +28,7 @@ AWS_EKS_Terraform/
 │   ├── Dev/               # Terraform deploy môi trường DEV tại us-east-1
 │   └── Prod/              # Terraform deploy môi trường PROD tại ap-southeast-1
 ├── /Global/
+├── /Modules/
 │   ├── aws_networking/    # Triển khai Networking (VPC, Subnet, Gateway, Route tables)
 │   ├── aws_iam/           # Tạo các IAM roles và policies
 │   ├── aws_eks/           # Triển khai EKS Cluster & Worker Nodes
@@ -40,6 +41,7 @@ AWS_EKS_Terraform/
 ## 🌎 Chi tiết thư mục `/Global`
 - `provider`
 - `terraform version`
+## 🛠️ Chi tiết thư mục `/Modules`
 ### 📁 `/aws_networking`  
 Bao gồm các thành phần mạng cơ bản:
 
